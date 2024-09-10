@@ -28,15 +28,18 @@ services:
       - mariadb
 
   mariadb:
-    hostname: ma0-tdi-mariadb
+    env_file:
+      - .env
+
+    hostname: ${HOST_NAME}
     image: mariadb:10.3
     volumes:
       - ./mariadb:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: qwerty
-      MYSQL_DATABASE: bitrix
-      MYSQL_USER: bitrix
-      MYSQL_PASSWORD: bitrix
+      MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
 
   # phpmyadmin:
   #   image: phpmyadmin/phpmyadmin
