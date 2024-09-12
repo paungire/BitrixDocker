@@ -13,14 +13,10 @@
   - ##### По окончанию первоначальной установки обязательно удалить папку .git чтобы отвязаться от гита
 
 # Первоначальная настройка проекта Bitrix с Git
-### Авторизация гита
+### Связывание с Git
 
-- `git config --global user.name "<user_name>"`
-- `git config --global user.email <user_email>`
-        
 ### Инструкция для деплоя проекта через гит
   
-  - Создать доп ветку `dev`
   - Заполнить все секретные переменные `Settings -> Security -> Actions -> Secrets`
 
       | Name          | Description                 |
