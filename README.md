@@ -15,8 +15,9 @@
 # Первоначальная настройка проекта Bitrix с Git
 ### Авторизация гита
 
-        git config --global user.name "<user_name>"
-        git config --global user.email <user_email>
+- `git config --global user.name "<user_name>"`
+- `git config --global user.email <user_email>`
+        
 ### Инструкция для деплоя проекта через гит
   
   - Создать доп ветку `dev`
