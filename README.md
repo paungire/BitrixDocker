@@ -21,10 +21,13 @@
       | MAIN_USER     | Имя пользователя sftp       |
       | MAIN_PASSWORD | Пароль пользователя sftp    |
       | MAIN_FOLDER   | Папка проекта               |
+      | DB_USER       | Имя пользователя бд         |
+      | DB_DATABASE   | Название базы данных        |
+      | DB_PASSWORD   | Пароль пользователя бд      |
 
   - Создать событие в `actions`
 
-      name: PushMain
+        name: PushMain
         on:
           push:
             branches: ["main"]
@@ -51,7 +54,7 @@
                   key: ${{ secrets.MAIN_KEY }}
                   script: |
                     cd ${{ secrets.MAIN_FOLDER }}
-                    mysql -u beton -p beton < ./dump.sql --password='zA5iC1pG7q'
+                    mysql -u ${{ secrets.DB_USER }} -p ${{ secrets.DB_DATABASE }} < ./dump.sql --password='${{ secrets.DB_PASSWORD }}'
 
 
 ### Правила
