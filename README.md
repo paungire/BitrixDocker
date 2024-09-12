@@ -13,7 +13,7 @@
 # Первоначальная настройка проекта Bitrix с Git
 ### Инструкция для деплоя проекта через гит
   - Создать доп ветку `dev`
-  - Заполнить все секретные переменные `Settings -> Security -> Actions -> Variable`
+  - Заполнить все секретные переменные `Settings -> Security -> Actions -> Secrets`
 
       | Name          | Description                 |
       | -----------   | -----------                 |
@@ -27,7 +27,7 @@
 
   - Создать событие в `actions`
 
-        name: PushMain
+        name: Deploy
         on:
           push:
             branches: ["main"]
@@ -39,13 +39,13 @@
             runs-on: ubuntu-latest
             steps:
               - uses: actions/checkout@v2
-              # Setup key
+              # Setup key and update files
               - run: set -eu
               - run: mkdir "$HOME/.ssh"
               - run: echo "${{ secrets.MAIN_KEY }}" > "$HOME/.ssh/key"
               - run: chmod 600 "$HOME/.ssh/key"
               - run: rsync -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress --delete --exclude='/bitrix' . ${{ secrets.MAIN_USER }}@${{ secrets.MAIN_HOST }}:${{ secrets.MAIN_FOLDER }}
-              
+              # Update db by ssh client
               - name: SSH Remote Commands
                 uses: appleboy/ssh-action@v1.0.3
                 with:
@@ -62,3 +62,5 @@
 - *По завершении вливать в dev и удалять*
 - *Если необходимы быстрые фиксы, можно создать ветку hot_fixes от main*
 - *После тестирования на dev вливать на main*
+- *При изменение бд делать дамп находясь внутри папки `/src` через команду:
+        docker exec -it <container_id> mysqldump -u <user_name> --password=<password> <db_name> > ./dump.sql
