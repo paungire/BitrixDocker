@@ -24,7 +24,7 @@
 
   - Создать событие в `actions`
 
-        name: PushMain
+      name: PushMain
         on:
           push:
             branches: ["main"]
@@ -35,16 +35,24 @@
           deploy:
             runs-on: ubuntu-latest
             steps:
+              - uses: actions/checkout@v2
+              # Setup key
+              - run: set -eu
+              - run: mkdir "$HOME/.ssh"
+              - run: echo "${{ secrets.MAIN_KEY }}" > "$HOME/.ssh/key"
+              - run: chmod 600 "$HOME/.ssh/key"
+              - run: rsync -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress --delete --exclude='/bitrix' . ${{ secrets.MAIN_USER }}@${{ secrets.MAIN_HOST }}:${{ secrets.MAIN_FOLDER }}
+              
               - name: SSH Remote Commands
                 uses: appleboy/ssh-action@v1.0.3
                 with:
                   host: ${{ secrets.MAIN_HOST }}
                   username: ${{ secrets.MAIN_USER }}
-                  password: ${{ secrets.MAIN_PASSWORD }}
+                  key: ${{ secrets.MAIN_KEY }}
                   script: |
-                    cd ${{ secrets.MAIN_FOLDER }};
-                    git checkout main;
-                    git pull;
+                    cd ${{ secrets.MAIN_FOLDER }}
+                    mysql -u beton -p beton < ./dump.sql --password='zA5iC1pG7q'
+
 
 ### Правила
 - *На каждую новую задачку надо создавать отдельную ветку от dev*
