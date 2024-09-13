@@ -59,6 +59,7 @@
                   script: |
                     cd ${{ secrets.MAIN_FOLDER }}
                     mysql -u ${{ secrets.DB_USER }} -p ${{ secrets.DB_DATABASE }} < ./dump.sql --password='${{ secrets.DB_PASSWORD }}'
+                    rm -rf ${{ secrets.MAIN_FOLDER }}/bitrix/cache/*
 
 
 ### Правила
@@ -75,3 +76,5 @@
         docker exec -it <container_id> mysql -u <db_user> -p <db_name> < ./dump.sql --password='<db_password>'
 
 ###### Дампы с разных ОС отличаются, для просмотра используется Files changed из Github
+
+###### При локальном развертовании dump.sql читстить кэш битрикса
