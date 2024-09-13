@@ -69,3 +69,7 @@
 - *При изменение бд делать дамп находясь внутри папки `/src` через команду:
 
         docker exec -it <container_id> mysqldump -u <user_name> --password=<password> <db_name> > ./dump.sql
+
+- *Ручной разворот бд из дампа
+
+        mysql -u <db_user> -p <db_name> < ./dump.sql --password='<db_password>'       
