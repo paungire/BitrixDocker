@@ -72,4 +72,6 @@
 
 - *Ручной разворот бд из дампа
 
-        docker exec -it <container_id> mysql -u <db_user> -p <db_name> < ./dump.sql --password='<db_password>'       
+        docker exec -it <container_id> mysql -u <db_user> -p <db_name> < ./dump.sql --password='<db_password>'
+ 
+ ******на Windows флаг `-it` менять на `-i`******
