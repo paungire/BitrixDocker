@@ -79,6 +79,27 @@
                     mysql -u ${{ secrets.DB_USER }} -p ${{ secrets.DB_DATABASE }} < ./dump.sql --password='${{ secrets.DB_PASSWORD }}'
                     rm -rf ${{ secrets.MAIN_FOLDER }}/bitrix/cache/*
 
+### Для https:// соединения
+- Создать сертификат
+
+        openssl req -x509 -out localhost.crt -keyout localhost.key \                                                 
+        -newkey rsa:2048 -nodes -sha256 \
+        -subj '/CN=localhost' -extensions EXT -config <( \
+         printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+- Прописать в `docker-compose.yml` nginx -> ports :
+  
+        - 443:443
+  
+- Прописать в `docker-compose.yml` nginx -> volumes :
+  
+      - ./nginx/localhost.crt:/etc/nginx/localhost.crt
+      - ./nginx/localhost.key:/etc/nginx/localhost.key
+
+- Прописать в `nginx.conf` http -> server :
+
+        listen 443 ssl http2;
+        ssl_certificate /etc/nginx/localhost.crt;
+        ssl_certificate_key /etc/nginx/localhost.key;
 
 ### Правила
 - *На каждую новую задачку надо создавать отдельную ветку от dev*
