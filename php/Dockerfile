@@ -13,5 +13,8 @@ RUN apt-get update -y && apt-get install -y sendmail libpng-dev
 RUN apt-get update && \
     apt-get install -y \
         zlib1g-dev
-
-RUN docker-php-ext-install gd
+RUN set -ex; \
+    apt-get install --no-install-recommends -y \
+        libfreetype6-dev libjpeg62-turbo-dev libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
