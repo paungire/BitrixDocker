@@ -66,14 +66,16 @@
               - run: mkdir "$HOME/.ssh"
               - run: echo "${{ secrets.MAIN_KEY }}" > "$HOME/.ssh/key"
               - run: chmod 600 "$HOME/.ssh/key"
-              - run: rsync -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress --delete --exclude='/bitrix' . ${{ secrets.MAIN_USER }}@${{ secrets.MAIN_HOST }}:${{ secrets.MAIN_FOLDER }}
+              # - run: rsync -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no" --archive --compress --delete --exclude='/bitrix' . ${{ secrets.MAIN_USER }}@${{ secrets.MAIN_HOST }}:${{ secrets.MAIN_FOLDER }}
+              - run: sshpass -p "${{ secrets.MAIN_PASSWORD }}" rsync -e "ssh -o StrictHostKeyChecking=no" --archive --compress --delete --exclude='/bitrix' . ${{ secrets.MAIN_USER }}@${{ secrets.MAIN_HOST }}:${{ secrets.MAIN_FOLDER }}
               # Update db by ssh client
               - name: SSH Remote Commands
                 uses: appleboy/ssh-action@v1.0.3
                 with:
                   host: ${{ secrets.MAIN_HOST }}
                   username: ${{ secrets.MAIN_USER }}
-                  key: ${{ secrets.MAIN_KEY }}
+                  # key: ${{ secrets.MAIN_KEY }}
+                  password: ${{ secrets.MAIN_PASSWORD }}
                   script: |
                     cd ${{ secrets.MAIN_FOLDER }}
                     mysql -u ${{ secrets.DB_USER }} -p ${{ secrets.DB_DATABASE }} < ./dump.sql --password='${{ secrets.DB_PASSWORD }}'
