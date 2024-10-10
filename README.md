@@ -1,4 +1,4 @@
-# Docker образ для bitrix, с установленной node-js и @bitrix/cli <br>
+# Docker образ для bitrix, с установленной node-js и @bitrix/cli
 ~ Рабочая папка **/src**, файлы которые могут потребоваться:
   - `bitrixsetup.php` - для разработки с нуля
   - `restore.php` - для развертывания сайта с последующими доработками
@@ -114,3 +114,65 @@
 ###### Дампы с разных ОС отличаются, для просмотра используется Files changed из Github
 
 ###### При локальном развертовании dump.sql читстить кэш битрикса
+
+# Основа работы для верстальщиков
+
+- *Склонировать репозиторий*
+- *Делать ключевые коммиты*
+
+### Пример action для синхронизации стилей и скриптов
+
+        name: Sync File Between Branches
+
+        on:
+          push:
+            branches:
+              - source-branch
+        
+        jobs:
+          copy-file:
+            runs-on: ubuntu-latest
+        
+            steps:
+              # Step 1: Checkout the repository
+              - name: Checkout source branch
+                uses: actions/checkout@v3
+                with:
+                  ref: source-branch
+        
+              # Step 2: Copy the file from source path
+              - name: Copy file from source branch
+                run: |
+                  mkdir -p temp_folder
+                  cp -R ./path/in/source/branch/filename temp_folder/
+        
+              # Step 3: Checkout the target branch
+              - name: Checkout target branch
+                run: |
+                  git fetch origin
+                  git checkout target-branch
+        
+              # Step 4: Copy file to target path
+              - name: Move file to target path
+                run: |
+                  mkdir -p ./path/in/target/branch/
+                  mv temp_folder/filename ./path/in/target/branch/
+        
+              # Step 5: Commit and push changes to target branch
+              - name: Commit and push changes
+                run: |
+                  git config --global user.name "github-actions[bot]"
+                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+                  git add ./path/in/target/branch/filename
+                  git commit -m "Sync file from source-branch"
+                  git push origin target-branch
+
+###### Вот ключевые моменты, которые нужно будет указать самому:
+- source-branch — исходная ветка, откуда забирается файл. Замените на имя ветки верстки. (murkup)
+- ./path/in/source/branch/filename — путь к файлу в исходной ветке, который нужно скопировать. Укажите точный путь к файлу, который будет забираться.
+- target-branch — целевая ветка, куда нужно залить файл. Замените на имя ветки, в которую будет копироваться файл.
+- ./path/in/target/branch/ — путь, куда нужно переместить файл в целевой ветке. Укажите конечную директорию, где файл должен оказаться.
+- ./path/in/target/branch/filename — путь для добавления файла в целевую ветку при коммите. Укажите полный путь к файлу в целевой ветке.
+
+
+
